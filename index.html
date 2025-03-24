@@ -66,24 +66,15 @@
 				<div class="w3-center">
 					<h2>Proposal</h2>
 				</div>
-				<p>有鑒於近年來硬體設備以及AI模型快速的進步，我們相信在不久的將來Stereo Camera會被更廣泛地使用。根據我們的了解，Stereo Image 在應用於 AI 模型時的主要挑戰在於：兩張影像之間具有大量重複資訊，以及相較於 Monocular Image 多出一倍的運算成本。然而，這些限制可望隨著硬體效能的提升而逐步克服。另外。相較於 Monocular Image，Stereo Image 能提供更豐富的資訊，特別是關鍵的深度資訊，這對於 3D Object Detection 來說是非常重要的。NVIDIA 最新的研究 <a href="https://nvlabs.github.io/FoundationStereo/">FoundationStereo</a> [1] 就證實了 Stereo Image 在深度估計方面的優勢，其準確度明顯優於 Monocular Image。此外，Stereo Image 不受限於相機的內參（intrinsics），這也是其一大優勢。綜合以上考量，我們希望開發一個以 Stereo Image 為輸入的 3D Object Detector。</p>
-				<p>在我之前在Interactive Robotics and Vision Lab的研究中，我開發出了一個同樣是以Stereo Image為輸入，能夠不依靠3D Supervision就能夠還原3D人體姿態的方法。該方法充分展現了AI模型在這一任務的潛力。不過，先前的方法只考慮了單一目標（Top-Down based method)。基於這個成果，我們想延伸RT-DETR [3] 的架構，保持DETR [2] 以及我之前研究的概念，對圖片中的目標物體同時預測出物體3D box投射到圖片空間後的Keypoints以及在不同視角之間的Disparity，進而用這些模型預測出的資訊重建出一個在3D空間中的3D box，以此達到3D Object Detection的目的。如下面兩圖所示，我們主要利用了從RT-DETR中提出的Encoder，並搭配從Deformable DETR [4] 提出的deformable transformer layer來有效的預測出所需要的資訊。</p>
+				<p>有鑒於近年來硬體設備以及AI模型快速的進步，我們相信在不久的將來Stereo Camera會被更廣泛地使用。根據我們的了解，Stereo Image 在應用於 AI 模型時的主要挑戰在於使用 Stereo Image 當輸入時相較於 Monocular Image 會多出一倍的運算成本，並且兩張影像之間具有大量重複資訊。然而，這些限制可望隨著硬體效能的提升而逐步克服。另外。相較於 Monocular Image，Stereo Image 能提供關鍵的深度資訊，這對於讓模型對3D空間的了解會有更大的幫助。NVIDIA 最新的研究 <a href="https://nvlabs.github.io/FoundationStereo/">FoundationStereo</a> [1] 就證實了 Stereo Image 在深度估計方面的優勢，其準確度明顯優於 Monocular Image。此外，Stereo Image 不受限於相機的內參（intrinsics）也是其一大優勢。綜合以上考量，我們希望開發一個以 Stereo Image 為輸入的 3D Object Detector，能夠同時 estimate 每個物體的 location, size, and pose in 3D space。</p>
+				<p>在我之前在 Interactive Robotics and Vision Lab 的研究中，我開發出了一個同樣是以 Stereo Image 為輸入，能夠還原 metric-scale 3D人體姿態的方法。該方法充分展現了AI模型在處理 Stereo Image 上的潛力。不過，先前的方法假設了圖片中只會出現單一目標（Top-Down based method)。基於這個成果，我們想延伸RT-DETR [3] 的架構，保持DETR [2] 以及我之前研究的概念，對圖片中的目標物體同時預測出物體3D box投射到圖片空間後的 Keypoints 以及在不同視角之間的 Disparity，進而用這些模型預測出的資訊重建出一個在3D空間中的 3D box，以此達到3D Object Detection的目的。如下圖所示，我們主要利用了從RT-DETR中提出的 Hybrid and Efficient Encoder，並搭配從 Deformable DETR [4] 提出的 Deformable Transformer Decoder 來有效的預測出所需要的資訊。</p>
 				<hr>
 
 				<table class="w3-table w3-bordered">
 					<tr>
 						<td style="width:50%;vertical-align:middle">
 							<img src="figures/hybrid-encoder.png" alt="Figure 1" style="width:100%">
-							<p style="text-align:center">Figure 1: The structure of the efficient encoder developed by RT-DETR [1].</p>
-						</td>
-					</tr>
-				</table>
-
-				<table class="w3-table w3-bordered">
-					<tr>
-						<td style="width:50%;vertical-align:middle">
-							<img src="figures/deformable-transformer-decoder.png" alt="Figure 2" style="width:100%">
-							<p style="text-align:center">Figure 2: The structure of the deformable transformer layer [2].</p>
+							<!-- <p style="text-align:center">Figure 1: The structure of the efficient encoder developed by RT-DETR [1].</p> -->
 						</td>
 					</tr>
 				</table>
@@ -92,8 +83,8 @@
 					<h2>Demo</h2>
 				</div>
 
-				<p>3D bounding boxes ground truths are marked as red and the estimation are marked as green.<br>
-					從目前的結果，可以看出我們的方法能夠順利的從stereo images中偵測出物體在3D空間中的位置（相機坐標軸）。然而，由於目前我們是採取Keypoint-Based的方法，有些形狀較不方正的物體（例如錘子）容易出現錯誤的預測。而在圖片中特徵比較不明顯的物體（例如被擋住或是形狀較小的物體）則有時後會被忽略。</p>
+				<p>從目前的結果，可以看出我們的方法能夠順利的從stereo images中偵測出物體在3D空間中的位置（相機坐標軸）。然而，由於目前我們是採取Keypoint-Based的方法，有些形狀較不方正的物體（例如錘子）容易出現錯誤的預測。而在圖片中特徵比較不明顯的物體（例如被擋住或是形狀較小的物體）則有時後會被忽略。</p>
+				<p>3D bounding boxes ground truths are marked as red and the estimation are marked as green.</p>
 				<table>
 					<tr style="padding:0px">
 						<td style="width:100%;vertical-align:middle">
